@@ -10,3 +10,7 @@ class Post(models.Model):
 
     def __str__(self):
         return f'제목 :[{self.pk}] {self.title}'
+
+
+    def get_url(self):
+        return f'/blog/{self.pk}'

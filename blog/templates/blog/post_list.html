@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h1>Hello?</h1>
+
+    <table>
+        <tr>
+            <th>번호</th>
+            <th>제목</th>
+            <th>내용</th>
+            <th>작성시간</th>
+        </tr>
+        {% for p in post_list %}
+        <tr>
+            <td>{{p.pk}}</td>
+            <td>
+                <a href="{{p.get_url}}">{{p.title}}</a>
+            </td>
+            <td>{{p.content}}</td>
+            <td>{{p.create_at}}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+
+
+
+</body>
+</html>
