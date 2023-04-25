@@ -22,7 +22,7 @@ class Post(models.Model):
         return f'제목 :[{self.pk}] {self.title}'
 
     def get_url(self):
-        return f'/blog/{self.pk}'
+        return f'/blog/{self.pk}/'
 
     def get_file_name(self):
         return os.path.basename(self.file_upload.name)
