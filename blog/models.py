@@ -1,5 +1,6 @@
 import os.path
 
+from django.contrib.auth.models import User
 from django.db import models
 
 
@@ -18,8 +19,11 @@ class Post(models.Model):
 
     file_upload = models.FileField(upload_to='blog/files/%Y/%m/%d', blank=True)
 
+    # 작성자가 삭제된 포스트에 작성자란 빈칸으로 남겨 둠
+    author = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
+
     def __str__(self):
-        return f'제목 :[{self.pk}] {self.title}'
+        return f'제목 :[{self.pk}] {self.title} :: {self.author}'
 
     def get_url(self):
         return f'/blog/{self.pk}/'

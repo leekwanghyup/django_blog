@@ -1,4 +1,5 @@
 from bs4 import BeautifulSoup
+from django.contrib.auth.models import User
 from django.test import TestCase, Client
 
 from blog.models import Post
@@ -9,7 +10,9 @@ class TestView(TestCase):
 
     def setUp(self):
         self.client = Client()
-
+        # 작성자 생성
+        self.user_trump = User.objects.create_user(username='trump', password='smoepassword')
+        self.user_obama = User.objects.create_user(username='obama', password='smoepassword')
 
     def test_post_list(self):
         # /blog/로 요청하면 200코드를 반환한다.
@@ -33,11 +36,13 @@ class TestView(TestCase):
         self.assertEquals(Post.objects.count(), 0)
         post_001 = Post.objects.create(
             title='첫 번째 포스트 입니다.',
-            content='Hello World. We are teh world'
+            content='Hello World. We are teh world',
+            author=self.user_trump
         )
         post_002 = Post.objects.create(
             title='두 번째 포스트 입니다.',
-            content='1등이 전부는 아니잖아요?'
+            content='1등이 전부는 아니잖아요?',
+            author=self.user_obama
         )
 
         # 포스트 게시물이 2개이다.
@@ -47,6 +52,8 @@ class TestView(TestCase):
         main_area = soup.find('div', id='main_area')
         self.assertIsNotNone(main_area);
         self.assertIn('아직 게시물이 없습니다.', main_area.text)
+        self.assertIn(self.user_trump.username.upper(), main_area.text)
+        self.assertIn(self.user_obama.username.upper(), main_area.text)
 
     def test_post_detail(self):
         post_001 = Post.objects.create(
@@ -58,21 +65,20 @@ class TestView(TestCase):
 
         # 첫 번째 포스트의 상세페이지 접근
         response = self.client.get(post_001.get_url())
-        self.assertEquals(response.status_code,200)
+        self.assertEquals(response.status_code, 200)
 
         # 네비게이션 바가 존재한다.
         soup = BeautifulSoup(response.content, 'html.parser')
         navbar = soup.nav
         self.assertIsNotNone(navbar)
-        self.assertIn('Blog',navbar.text)
+        self.assertIn('Blog', navbar.text)
         self.assertIn('About Me', navbar.text)
 
         # 포스트의 제목이 웹 브라우저 탭 타이틀에 포함되어있다.
         self.assertIn(post_001.title, soup.title.text)
 
         # 포스트의 제목이 포스트 영역(post_area)에 있다.
-        main_area = soup.find('div',id='main-area')
-        post_area = main_area.find('article',id='post-area')
+        post_area = soup.find('article', id='post-area')
         self.assertIn(post_001.title, post_area.text)
 
         # 포스트의 내용이 포스팅 영역에 있다.

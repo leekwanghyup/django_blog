@@ -21,7 +21,7 @@
     </div>
     <div class="card-footer text-muted">
         Posted on {{p.create_at}}
-        <a href="#">작성자 : 홍길동(개발중)</a>
+        <a href="#">{{ p.author | upper }}</a>
     </div>
 </div>
 {% endfor %}
