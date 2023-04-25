@@ -70,6 +70,11 @@
                 </figure>
                 <!-- Post content-->
                 <section class="mb-5">{{post.content}}</section>
+                {% if post.file_upload.url %}
+                    <a href="{{post.file_upload.url}}" class="">다운로드 : {{post.get_file_name}} </a>
+                {% endif%}
+
+
             </article>
             <!-- Comments section-->
             <section class="mb-5">
